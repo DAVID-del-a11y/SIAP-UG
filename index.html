@@ -61,7 +61,56 @@
 
         <!-- TAB 1: ASPIRASI & PENGADUAN -->
         <section id="aspirasiSection" class="tab-content">
+            <!-- LOGIN DAN DAFTAR AKUN SIAP-UG -->
+    <div class="form-card" id="authCard">
+        <div class="card-header-inner">
+            <h3>Akun SIAP-UG</h3>
+            <p>Login atau daftar akun untuk mengirim aspirasi.</p>
+        </div>
 
+        <form id="authForm">
+            <div class="form-group">
+                <label for="authEmail">Alamat Email</label>
+                <input
+                    type="email"
+                    id="authEmail"
+                    placeholder="Masukkan email aktif"
+                    autocomplete="email"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="authPassword">Kata Sandi</label>
+                <input
+                    type="password"
+                    id="authPassword"
+                    placeholder="Minimal 8 karakter"
+                    autocomplete="current-password"
+                    minlength="8"
+                    required
+                >
+            </div>
+
+            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                <button type="submit" class="btn-primary" id="loginBtn">
+                    Login
+                </button>
+                <button type="button" class="btn-primary" id="signupBtn">
+                    Daftar Akun
+                </button>
+            </div>
+        </form>
+
+        <p id="authMessage" role="status" aria-live="polite"></p>
+
+        <div id="accountInfo" hidden>
+            <p id="loggedInEmail"></p>
+            <button type="button" class="btn-primary" id="logoutBtn">
+                Logout
+            </button>
+        </div>
+    </div>
             <div class="hero-banner">
                 <span class="badge-tag">Portal Aspirasi Mahasiswa</span>
 
