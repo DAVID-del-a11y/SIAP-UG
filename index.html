@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIAP-UG | Sistem Aspirasi & Pusat Informasi Terpadu Universitas Gunadarma</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <header class="navbar">
+        <div class="container nav-container">
+            <div class="brand-logo-icon">
+                <img src="Logo-UG/Universitas Gunadarma Tech Emblem.png" alt="Logo UG">
+                <div>
+                    <h1>SIAP<span>-UG</span></h1>
+                    <p>Sistem Aspirasi & Pusat Informasi Terpadu</p>
+                </div>
+            </div>
+            <nav class="nav-tabs">
+                <button class="tab-btn active" onclick="switchTab('aspirasi')">Layanan Aspirasi</button>
+                <button class="tab-btn" onclick="switchTab('informasi')">Direktori & Info Kampus</button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="container main-content">
+
+        <!-- TAB 1: ASPIRASI & PENGADUAN -->
+        <section id="aspirasiSection" class="tab-content">
+            <div class="hero-banner">
+                <span class="badge-tag">Portal Resmi Mahasiswa</span>
+                <h2>Pusat Aspirasi & Pelaporan Mahasiswa</h2>
+                <p>Sampaikan masukan, kritik, serta kendala akademik dan fasilitas secara terstruktur, transparan, dan terhubung langsung dengan unit layanan kampus.</p>
+            </div>
+
+            <div class="form-card">
+                <div class="card-header-inner">
+                    <h3>Formulir Pengaduan & Aspirasi</h3>
+                    <p>Pastikan mengisi data diri dan memilih kategori tujuan dengan benar.</p>
+                </div>
+                <form action="proses.php" method="POST">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="nama">Nama Lengkap</label>
+                            <input type="text" id="nama" placeholder="Masukkan nama lengkap Anda" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="npm">Nomor Pokok Mahasiswa (NPM)</label>
+                            <input type="text" id="npm" placeholder="Contoh: 51425384" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="kelas">Kelas</label>
+                            <input type="text" id="kelas" placeholder="Contoh: 1IA06" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="kategori">Kategori Laporan</label>
+                            <select id="kategori" required>
+                                <option value="" disabled selected>-- Pilih Kategori --</option>
+                                <option value="Akademik">Akademik & V-Class</option>
+                                <option value="Praktikum">Praktikum & Laboratorium</option>
+                                <option value="Fasilitas">Fasilitas Kampus & Layanan</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="unitTujuan">Unit / Portal Tujuan Kampus</label>
+                        <select id="unitTujuan" required>
+                            <option value="" disabled selected>-- Pilih Kategori Utama Terlebih Dahulu --</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="deskripsi">Deskripsi Detail Laporan / Kendala</label>
+                        <textarea id="deskripsi" rows="4" placeholder="Tuliskan detail aduan, kendala akses, atau aspirasi Anda secara jelas dan objektif..." required></textarea>
+                    </div>
+
+                    <button type="submit" class="btn-primary">Kirim Laporan & Teruskan ke Sistem</button>
+                </form>
+            </div>
+
+            <!-- Kartu Notifikasi Hasil Pengujian Fungsional -->
+            <div id="resultCard" class="result-card hidden">
+                <div class="success-icon-box">✓</div>
+                <div class="success-content">
+                    <h3>Laporan Berhasil Direkam ke Database</h3>
+                    <p id="resultText"></p>
+                    <div id="redirectContainer"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 2: DIREKTORI INFORMASI, PRAKTIKUM & LOKASI KAMPUS -->
+        <section id="informasiSection" class="tab-content hidden">
+            <div class="hero-banner">
+                <span class="badge-tag">Pusat Pengetahuan & Navigasi</span>
+                <h2>Direktori Terpadu Sivitas Akademika</h2>
+                <p>Akses cepat portal perkuliahan daring, sistem manajemen praktikum, perpustakaan, serta peta lokasi gedung kampus Gunadarma.</p>
+            </div>
+
+            <!-- Portal Akademik & V-Class -->
+            <div class="info-block">
+                <h3>Portal Akademik & V-Class Utama</h3>
+                <div id="academicGrid" class="portal-grid"></div>
+            </div>
+
+            <!-- Portal Praktikum & Laboratorium -->
+            <div class="info-block">
+                <h3>Portal Praktikum & Laboratorium</h3>
+                <div id="praktikumGrid" class="portal-grid"></div>
+            </div>
+
+            <!-- Direktori Lokasi Kampus & Google Maps -->
+            <div class="info-block">
+                <h3>Lokasi Gedung Kampus Gunadarma & Navigasi Maps</h3>
+                <div id="campusGrid" class="campus-grid"></div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer dengan Catatan Legal Hak Cipta -->
+    <footer class="footer">
+        <div class="container footer-content">
+            <p>&copy; 2026 SIAP-UG Pro. Hak Cipta Dilindungi Undang-Undang.</p>
+            <p class="footer-sub">Dikembangkan sebagai Produk Teknologi Informasi & Kajian Legal Aspek Universitas Gunadarma.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
