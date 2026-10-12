@@ -11,65 +11,76 @@ const supabaseClient = window.supabase.createClient(
     SUPABASE_KEY
 );
 
-/* =========================================
-   LUPA KATA SANDI
-========================================= */
-
-async function resetPassword() {
-    const emailInput = document.getElementById("authEmail");
-    const email = emailInput?.value.trim();
-
-    if (!email) {
-        alert("Masukkan email terlebih dahulu.");
-        emailInput?.focus();
-        return;
-    }
-
-    try {
-        const { error } = await supabaseClient.auth
-            .resetPasswordForEmail(email, {
-                redirectTo: "https://david-del-a11y.github.io/SIAP-UG/"
-            });
-
-        if (error) throw error;
-
-        alert(
-            "Tautan pemulihan telah diminta. Silakan periksa email dan folder spam."
-        );
-    } catch (error) {
-        console.error("Gagal meminta reset kata sandi:", error);
-        alert("Permintaan gagal: " + error.message);
-    }
-}
-
+const RECOVERY_REDIRECT_URL =
+    "https://david-del-a11y.github.io/SIAP-UG/";
 
 /* =========================================
    DATA PORTAL AKADEMIK & V-CLASS
 ========================================= */
 
 const academicPortals = [
-    { name: "Komputasi Big Data (Team Teaching)", desc: "V-Class Komputasi Big Data ID: 8", url: "https://v-class.gunadarma.ac.id/course/view.php?id=8" },
-    { name: "Praktikum Komputasi Big Data", desc: "V-Class Modul Komputasi Big Data ID: 24", url: "https://v-class.gunadarma.ac.id/course/view.php?id=24" },
-    { name: "BAAK Online", desc: "Layanan administrasi akademik & jadwal kuliah", url: "https://baak.gunadarma.ac.id" },
-    { name: "Studentsite Gunadarma", desc: "Portal utama rangkuman nilai & informasi mahasiswa", url: "https://studentsite.gunadarma.ac.id" }
+    {
+        name: "Komputasi Big Data (Team Teaching)",
+        desc: "V-Class Komputasi Big Data ID: 8",
+        url: "https://v-class.gunadarma.ac.id/course/view.php?id=8"
+    },
+    {
+        name: "Praktikum Komputasi Big Data",
+        desc: "V-Class Modul Komputasi Big Data ID: 24",
+        url: "https://v-class.gunadarma.ac.id/course/view.php?id=24"
+    },
+    {
+        name: "BAAK Online",
+        desc: "Layanan administrasi akademik & jadwal kuliah",
+        url: "https://baak.gunadarma.ac.id"
+    },
+    {
+        name: "Studentsite Gunadarma",
+        desc: "Portal utama rangkuman nilai & informasi mahasiswa",
+        url: "https://studentsite.gunadarma.ac.id"
+    }
 ];
 
 const praktikumPortals = [
-    { name: "Praktikum ILAB", desc: "Sistem Manajemen Praktikum ILAB Gunadarma", url: "https://praktikum.gunadarma.ac.id/login/index.php" },
-    { name: "Praktikum LabTI (AP-3 A, AP-3 B & Data Science)", desc: "Portal Praktikum iFLAB / LabTI", url: "https://praktikum-iflab.gunadarma.ac.id/login/index.php" },
-    { name: "Praktikum LEPKOM (Virtual Machine)", desc: "Akses Praktikum Server / VM Lepkom", url: "https://vm.lepkom.gunadarma.ac.id/auth" },
-    { name: "LEPKOM Utama", desc: "Pusat modul & pendaftaran praktikum laboratorium", url: "https://lepkom.gunadarma.ac.id" }
+    {
+        name: "Praktikum ILAB",
+        desc: "Sistem Manajemen Praktikum ILAB Gunadarma",
+        url: "https://praktikum.gunadarma.ac.id/login/index.php"
+    },
+    {
+        name: "Praktikum LabTI (AP-3 A, AP-3 B & Data Science)",
+        desc: "Portal Praktikum iFLAB / LabTI",
+        url: "https://praktikum-iflab.gunadarma.ac.id/login/index.php"
+    },
+    {
+        name: "Praktikum LEPKOM (Virtual Machine)",
+        desc: "Akses Praktikum Server / VM Lepkom",
+        url: "https://vm.lepkom.gunadarma.ac.id/auth"
+    },
+    {
+        name: "LEPKOM Utama",
+        desc: "Pusat modul & pendaftaran praktikum laboratorium",
+        url: "https://lepkom.gunadarma.ac.id"
+    }
 ];
 
 const fasilitasPortals = [
-    { name: "Kemahasiswaan Gunadarma", desc: "Portal beasiswa, ormawa, & kegiatan mahasiswa", url: "https://kemahasiswaan.gunadarma.ac.id" },
-    { name: "Perpustakaan Gunadarma", desc: "E-Library & pencarian katalog buku", url: "https://library.gunadarma.ac.id" }
+    {
+        name: "Kemahasiswaan Gunadarma",
+        desc: "Portal beasiswa, ormawa, & kegiatan mahasiswa",
+        url: "https://kemahasiswaan.gunadarma.ac.id"
+    },
+    {
+        name: "Perpustakaan Gunadarma",
+        desc: "E-Library & pencarian katalog buku",
+        url: "https://library.gunadarma.ac.id"
+    }
 ];
 
 const unitOptions = {
-    "Akademik": academicPortals,
-    "Praktikum": praktikumPortals,
-    "Fasilitas": fasilitasPortals
+    Akademik: academicPortals,
+    Praktikum: praktikumPortals,
+    Fasilitas: fasilitasPortals
 };
 
 /* =========================================
@@ -95,6 +106,258 @@ const campusLocations = [
 ];
 
 /* =========================================
+   REFERENSI ELEMEN HTML
+========================================= */
+
+const authForm = document.getElementById("authForm");
+const authCard = document.getElementById("authCard");
+const authEmail = document.getElementById("authEmail");
+const authPassword = document.getElementById("authPassword");
+const authMessage = document.getElementById("authMessage");
+
+const loginBtn = document.getElementById("loginBtn");
+const signupBtn = document.getElementById("signupBtn");
+const resetPasswordBtn = document.getElementById("resetPasswordBtn");
+const logoutBtn = document.getElementById("logoutBtn");
+
+const accountInfo = document.getElementById("accountInfo");
+const loggedInEmail = document.getElementById("loggedInEmail");
+
+let currentSession = null;
+
+/* =========================================
+   PESAN STATUS AUTENTIKASI
+========================================= */
+
+function showAuthMessage(message, isError = false) {
+    if (!authMessage) return;
+
+    authMessage.textContent = message;
+    authMessage.style.color = isError ? "#b42318" : "#16794b";
+}
+
+/* =========================================
+   FORMULIR KATA SANDI BARU
+========================================= */
+
+// Form dibuat melalui JavaScript agar tidak perlu
+// menambahkan elemen baru di index.html.
+
+const recoveryPanel = document.createElement("div");
+recoveryPanel.id = "passwordRecoveryPanel";
+recoveryPanel.hidden = true;
+
+recoveryPanel.innerHTML = `
+    <h3>Buat Kata Sandi Baru</h3>
+    <p>Masukkan kata sandi baru untuk akun SIAP-UG kamu.</p>
+
+    <form id="newPasswordForm">
+        <div class="form-group">
+            <label for="newPassword">Kata Sandi Baru</label>
+            <input
+                type="password"
+                id="newPassword"
+                autocomplete="new-password"
+                minlength="8"
+                placeholder="Minimal 8 karakter"
+                required
+            >
+        </div>
+
+        <div class="form-group">
+            <label for="confirmNewPassword">Konfirmasi Kata Sandi</label>
+            <input
+                type="password"
+                id="confirmNewPassword"
+                autocomplete="new-password"
+                minlength="8"
+                placeholder="Ulangi kata sandi baru"
+                required
+            >
+        </div>
+
+        <button type="submit" class="btn-primary" id="saveNewPasswordBtn">
+            Simpan Kata Sandi Baru
+        </button>
+    </form>
+`;
+
+if (authCard && authMessage) {
+    authCard.insertBefore(recoveryPanel, authMessage);
+}
+
+const newPasswordForm = document.getElementById("newPasswordForm");
+const newPasswordInput = document.getElementById("newPassword");
+const confirmNewPasswordInput =
+    document.getElementById("confirmNewPassword");
+const saveNewPasswordBtn =
+    document.getElementById("saveNewPasswordBtn");
+
+/* =========================================
+   TAMPILAN LOGIN
+========================================= */
+
+function updateAuthUI(session) {
+    currentSession = session;
+
+    const user = session?.user;
+    const recoveryActive = !recoveryPanel.hidden;
+
+    if (authForm) {
+        authForm.hidden = Boolean(user) || recoveryActive;
+    }
+
+    if (accountInfo) {
+        accountInfo.hidden = !user || recoveryActive;
+    }
+
+    if (loggedInEmail) {
+        loggedInEmail.textContent = user
+            ? `Login sebagai: ${user.email}`
+            : "";
+    }
+
+    if (authCard) {
+        authCard.classList.toggle("logged-in", Boolean(user));
+    }
+}
+
+/* =========================================
+   LUPA KATA SANDI
+========================================= */
+
+async function resetPassword() {
+    const email = authEmail?.value.trim();
+
+    if (!email) {
+        showAuthMessage(
+            "Masukkan email akun kamu terlebih dahulu.",
+            true
+        );
+        authEmail?.focus();
+        return;
+    }
+
+    if (!authEmail.checkValidity()) {
+        showAuthMessage("Format email belum valid.", true);
+        authEmail.reportValidity();
+        return;
+    }
+
+    if (resetPasswordBtn) resetPasswordBtn.disabled = true;
+
+    showAuthMessage("Sedang meminta tautan pemulihan...");
+
+    try {
+        const { error } = await supabaseClient.auth.resetPasswordForEmail(
+            email,
+            {
+                redirectTo: RECOVERY_REDIRECT_URL
+            }
+        );
+
+        if (error) throw error;
+
+        showAuthMessage(
+            "Permintaan pemulihan diproses. Periksa email dan folder spam."
+        );
+    } catch (error) {
+        console.error("Gagal meminta reset kata sandi:", error);
+
+        showAuthMessage(
+            "Permintaan pemulihan gagal: " + error.message,
+            true
+        );
+    } finally {
+        if (resetPasswordBtn) resetPasswordBtn.disabled = false;
+    }
+}
+
+if (resetPasswordBtn) {
+    resetPasswordBtn.addEventListener("click", resetPassword);
+}
+
+/* =========================================
+   PROSES SIMPAN KATA SANDI BARU
+========================================= */
+
+if (newPasswordForm) {
+    newPasswordForm.addEventListener("submit", async function (event) {
+        event.preventDefault();
+
+        const newPassword = newPasswordInput.value;
+        const confirmPassword = confirmNewPasswordInput.value;
+
+        if (newPassword.length < 8) {
+            showAuthMessage(
+                "Kata sandi baru minimal 8 karakter.",
+                true
+            );
+            return;
+        }
+
+        if (newPassword !== confirmPassword) {
+            showAuthMessage(
+                "Konfirmasi kata sandi tidak cocok.",
+                true
+            );
+            confirmNewPasswordInput.focus();
+            return;
+        }
+
+        if (saveNewPasswordBtn) {
+            saveNewPasswordBtn.disabled = true;
+        }
+
+        showAuthMessage("Sedang memperbarui kata sandi...");
+
+        try {
+            const { error } = await supabaseClient.auth.updateUser({
+                password: newPassword
+            });
+
+            if (error) throw error;
+
+            // Tutup formulir pemulihan sebelum memperbarui tampilan.
+            recoveryPanel.hidden = true;
+
+            if (newPasswordForm) newPasswordForm.reset();
+
+            // Akhiri sesi pemulihan agar pengguna login kembali
+            // dengan kata sandi yang baru.
+            const { error: signOutError } =
+                await supabaseClient.auth.signOut();
+
+            if (signOutError) {
+                console.warn(
+                    "Kata sandi berubah, tetapi sesi belum berakhir:",
+                    signOutError.message
+                );
+            }
+
+            updateAuthUI(null);
+
+            showAuthMessage(
+                "Kata sandi berhasil diperbarui. Silakan login dengan kata sandi baru."
+            );
+
+            authCard?.scrollIntoView({ behavior: "smooth" });
+        } catch (error) {
+            console.error("Gagal memperbarui kata sandi:", error);
+
+            showAuthMessage(
+                "Gagal memperbarui kata sandi: " + error.message,
+                true
+            );
+        } finally {
+            if (saveNewPasswordBtn) {
+                saveNewPasswordBtn.disabled = false;
+            }
+        }
+    });
+}
+
+/* =========================================
    NAVIGASI TAB
 ========================================= */
 
@@ -106,13 +369,16 @@ function switchTab(tabName) {
     buttons.forEach(btn => btn.classList.remove("active"));
 
     if (tabName === "aspirasi") {
-        aspirasiSec.classList.remove("hidden");
-        informasiSec.classList.add("hidden");
+        aspirasiSec?.classList.remove("hidden");
+        informasiSec?.classList.add("hidden");
+
         if (buttons[0]) buttons[0].classList.add("active");
     } else {
-        aspirasiSec.classList.add("hidden");
-        informasiSec.classList.remove("hidden");
+        aspirasiSec?.classList.add("hidden");
+        informasiSec?.classList.remove("hidden");
+
         if (buttons[1]) buttons[1].classList.add("active");
+
         renderDirectoryContent();
     }
 }
@@ -124,17 +390,32 @@ function switchTab(tabName) {
 function renderDirectoryContent() {
     const academicGrid = document.getElementById("academicGrid");
     const praktikumGrid = document.getElementById("praktikumGrid");
+    const fasilitasGrid = document.getElementById("fasilitasGrid");
     const campusGrid = document.getElementById("campusGrid");
 
-    if (!academicGrid || !praktikumGrid || !campusGrid) return;
+    if (!academicGrid || !praktikumGrid || !fasilitasGrid || !campusGrid) {
+        return;
+    }
+
+    // Hindari menggandakan kartu ketika tab dibuka kembali.
     if (campusGrid.innerHTML.trim() !== "") return;
 
-    academicPortals.forEach(p => {
-        academicGrid.appendChild(createPortalCard(p.name, p.desc, p.url));
+    academicPortals.forEach(portal => {
+        academicGrid.appendChild(
+            createPortalCard(portal.name, portal.desc, portal.url)
+        );
     });
 
-    praktikumPortals.forEach(p => {
-        praktikumGrid.appendChild(createPortalCard(p.name, p.desc, p.url));
+    praktikumPortals.forEach(portal => {
+        praktikumGrid.appendChild(
+            createPortalCard(portal.name, portal.desc, portal.url)
+        );
+    });
+
+    fasilitasPortals.forEach(portal => {
+        fasilitasGrid.appendChild(
+            createPortalCard(portal.name, portal.desc, portal.url)
+        );
     });
 
     campusLocations.forEach(camp => {
@@ -142,6 +423,7 @@ function renderDirectoryContent() {
         card.className = "campus-card";
 
         const info = document.createElement("div");
+
         const title = document.createElement("h4");
         title.textContent = camp.code;
 
@@ -171,11 +453,12 @@ function renderDirectoryContent() {
 }
 
 function createPortalCard(title, desc, url) {
-    const a = document.createElement("a");
-    a.className = "portal-item";
-    a.href = url;
-    a.target = "_blank";
-    a.rel = "noopener noreferrer";
+    const link = document.createElement("a");
+
+    link.className = "portal-item";
+    link.href = url;
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
 
     const strong = document.createElement("strong");
     strong.textContent = title;
@@ -183,77 +466,48 @@ function createPortalCard(title, desc, url) {
     const span = document.createElement("span");
     span.textContent = desc;
 
-    a.append(strong, span);
-    return a;
+    link.append(strong, span);
+
+    return link;
 }
 
 /* =========================================
-   LOGIN, DAFTAR AKUN & LOGOUT
+   LOGIN
 ========================================= */
 
-const authForm = document.getElementById("authForm");
-const authCard = document.getElementById("authCard");
-const authEmail = document.getElementById("authEmail");
-const authPassword = document.getElementById("authPassword");
-const authMessage = document.getElementById("authMessage");
-const signupBtn = document.getElementById("signupBtn");
-const logoutBtn = document.getElementById("logoutBtn");
-const accountInfo = document.getElementById("accountInfo");
-const loggedInEmail = document.getElementById("loggedInEmail");
-
-let currentSession = null;
-
-function showAuthMessage(message, isError = false) {
-    if (!authMessage) return;
-    authMessage.textContent = message;
-    authMessage.style.color = isError ? "#b42318" : "#16794b";
-}
-
-function updateAuthUI(session) {
-    currentSession = session;
-    const user = session?.user;
-
-    if (authForm) authForm.hidden = Boolean(user);
-    if (accountInfo) accountInfo.hidden = !user;
-
-    if (loggedInEmail) {
-        loggedInEmail.textContent = user
-            ? `Login sebagai: ${user.email}`
-            : "";
-    }
-
-    if (authCard) {
-        authCard.classList.toggle("logged-in", Boolean(user));
-    }
-}
-
-// Login
 if (authForm) {
-    authForm.addEventListener("submit", async function (e) {
-        e.preventDefault();
+    authForm.addEventListener("submit", async function (event) {
+        event.preventDefault();
 
         const email = authEmail.value.trim();
         const password = authPassword.value;
 
-        const loginBtn = document.getElementById("loginBtn");
         if (loginBtn) loginBtn.disabled = true;
         if (signupBtn) signupBtn.disabled = true;
 
         showAuthMessage("Sedang memproses login...");
 
         try {
-            const { data, error } = await supabaseClient.auth.signInWithPassword({
-                email,
-                password
-            });
+            const { data, error } =
+                await supabaseClient.auth.signInWithPassword({
+                    email,
+                    password
+                });
 
             if (error) throw error;
 
             updateAuthUI(data.session);
-            showAuthMessage("Login berhasil. Kamu sekarang bisa mengirim laporan.");
+
+            showAuthMessage(
+                "Login berhasil. Kamu sekarang bisa mengirim laporan."
+            );
+
             authPassword.value = "";
         } catch (error) {
-            showAuthMessage("Login gagal: " + error.message, true);
+            showAuthMessage(
+                "Login gagal: " + error.message,
+                true
+            );
         } finally {
             if (loginBtn) loginBtn.disabled = false;
             if (signupBtn) signupBtn.disabled = false;
@@ -261,24 +515,38 @@ if (authForm) {
     });
 }
 
-// Daftar akun
+/* =========================================
+   DAFTAR AKUN
+========================================= */
+
 if (signupBtn) {
     signupBtn.addEventListener("click", async function () {
         const email = authEmail.value.trim();
         const password = authPassword.value;
 
         if (!email || !password) {
-            showAuthMessage("Isi email dan kata sandi terlebih dahulu.", true);
+            showAuthMessage(
+                "Isi email dan kata sandi terlebih dahulu.",
+                true
+            );
+            return;
+        }
+
+        if (!authEmail.checkValidity()) {
+            showAuthMessage("Format email belum valid.", true);
+            authEmail.reportValidity();
             return;
         }
 
         if (password.length < 8) {
-            showAuthMessage("Kata sandi minimal 8 karakter.", true);
+            showAuthMessage(
+                "Kata sandi minimal 8 karakter.",
+                true
+            );
             return;
         }
 
         signupBtn.disabled = true;
-        const loginBtn = document.getElementById("loginBtn");
         if (loginBtn) loginBtn.disabled = true;
 
         showAuthMessage("Sedang membuat akun...");
@@ -293,14 +561,20 @@ if (signupBtn) {
 
             if (data.session) {
                 updateAuthUI(data.session);
-                showAuthMessage("Akun berhasil dibuat dan kamu sudah login.");
+
+                showAuthMessage(
+                    "Akun berhasil dibuat dan kamu sudah login."
+                );
             } else {
                 showAuthMessage(
                     "Akun berhasil didaftarkan. Periksa email untuk konfirmasi, lalu login."
                 );
             }
         } catch (error) {
-            showAuthMessage("Pendaftaran gagal: " + error.message, true);
+            showAuthMessage(
+                "Pendaftaran gagal: " + error.message,
+                true
+            );
         } finally {
             signupBtn.disabled = false;
             if (loginBtn) loginBtn.disabled = false;
@@ -308,37 +582,69 @@ if (signupBtn) {
     });
 }
 
-// Logout
+/* =========================================
+   LOGOUT
+========================================= */
+
 if (logoutBtn) {
     logoutBtn.addEventListener("click", async function () {
         logoutBtn.disabled = true;
 
         try {
             const { error } = await supabaseClient.auth.signOut();
+
             if (error) throw error;
 
             updateAuthUI(null);
             showAuthMessage("Kamu sudah logout.");
         } catch (error) {
-            showAuthMessage("Logout gagal: " + error.message, true);
+            showAuthMessage(
+                "Logout gagal: " + error.message,
+                true
+            );
         } finally {
             logoutBtn.disabled = false;
         }
     });
 }
 
-// Pulihkan sesi login dan pantau perubahan status autentikasi
+/* =========================================
+   PANTAU STATUS AUTENTIKASI
+========================================= */
+
 supabaseClient.auth.onAuthStateChange((event, session) => {
     updateAuthUI(session);
+
+    if (event === "PASSWORD_RECOVERY") {
+        recoveryPanel.hidden = false;
+
+        if (authForm) authForm.hidden = true;
+        if (accountInfo) accountInfo.hidden = true;
+
+        showAuthMessage(
+            "Tautan pemulihan valid. Silakan buat kata sandi baru."
+        );
+
+        authCard?.scrollIntoView({ behavior: "smooth" });
+    }
 });
+
+/* =========================================
+   PULIHKAN SESI LOGIN
+========================================= */
 
 (async function restoreSession() {
     try {
         const { data, error } = await supabaseClient.auth.getSession();
+
         if (error) throw error;
+
         updateAuthUI(data.session);
     } catch (error) {
-        showAuthMessage("Gagal memeriksa sesi login: " + error.message, true);
+        showAuthMessage(
+            "Gagal memeriksa sesi login: " + error.message,
+            true
+        );
     }
 })();
 
@@ -348,6 +654,7 @@ supabaseClient.auth.onAuthStateChange((event, session) => {
 
 const kategoriSelect = document.getElementById("kategori");
 const unitTujuanSelect = document.getElementById("unitTujuan");
+
 const laporanForm = document.getElementById("laporanForm");
 const resultCard = document.getElementById("resultCard");
 const resultText = document.getElementById("resultText");
@@ -363,8 +670,10 @@ if (kategoriSelect && unitTujuanSelect) {
         if (unitOptions[selectedCategory]) {
             unitOptions[selectedCategory].forEach(item => {
                 const option = document.createElement("option");
+
                 option.value = item.url;
                 option.textContent = item.name;
+
                 unitTujuanSelect.appendChild(option);
             });
         }
@@ -376,11 +685,14 @@ if (kategoriSelect && unitTujuanSelect) {
 ========================================= */
 
 if (laporanForm) {
-    laporanForm.addEventListener("submit", async function (e) {
-        e.preventDefault();
+    laporanForm.addEventListener("submit", async function (event) {
+        event.preventDefault();
 
         if (!currentSession?.user) {
-            alert("Silakan login terlebih dahulu sebelum mengirim laporan.");
+            alert(
+                "Silakan login terlebih dahulu sebelum mengirim laporan."
+            );
+
             authCard?.scrollIntoView({ behavior: "smooth" });
             return;
         }
@@ -390,6 +702,7 @@ if (laporanForm) {
         const kelas = document.getElementById("kelas").value.trim();
         const kategori = kategoriSelect.value;
         const deskripsi = document.getElementById("deskripsi").value.trim();
+
         const selectedUnit =
             unitTujuanSelect.options[unitTujuanSelect.selectedIndex];
 
@@ -415,12 +728,12 @@ if (laporanForm) {
             const laporan = {
                 user_id: currentSession.user.id,
                 jenis_pelapor: "Mahasiswa",
-                nama: nama,
+                nama,
                 identitas: npm,
-                kelas: kelas,
-                kategori: kategori,
+                kelas,
+                kategori,
                 unit_tujuan: selectedUnit.textContent,
-                deskripsi: deskripsi
+                deskripsi
             };
 
             const { error } = await supabaseClient
@@ -443,7 +756,8 @@ if (laporanForm) {
                 link.href = selectedUnit.value;
                 link.target = "_blank";
                 link.rel = "noopener noreferrer";
-                link.textContent = `Akses Portal ${selectedUnit.textContent} →`;
+                link.textContent =
+                    `Akses Portal ${selectedUnit.textContent} →`;
 
                 redirectContainer.appendChild(link);
             }
@@ -461,6 +775,7 @@ if (laporanForm) {
             }
         } catch (error) {
             console.error("Gagal menyimpan laporan:", error);
+
             alert(
                 "Laporan belum berhasil disimpan. Periksa koneksi dan konfigurasi Supabase. Detail: " +
                 error.message
