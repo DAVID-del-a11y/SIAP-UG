@@ -12,6 +12,38 @@ const supabaseClient = window.supabase.createClient(
 );
 
 /* =========================================
+   LUPA KATA SANDI
+========================================= */
+
+async function resetPassword() {
+    const emailInput = document.getElementById("authEmail");
+    const email = emailInput?.value.trim();
+
+    if (!email) {
+        alert("Masukkan email terlebih dahulu.");
+        emailInput?.focus();
+        return;
+    }
+
+    try {
+        const { error } = await supabaseClient.auth
+            .resetPasswordForEmail(email, {
+                redirectTo: "https://david-del-a11y.github.io/SIAP-UG/"
+            });
+
+        if (error) throw error;
+
+        alert(
+            "Tautan pemulihan telah diminta. Silakan periksa email dan folder spam."
+        );
+    } catch (error) {
+        console.error("Gagal meminta reset kata sandi:", error);
+        alert("Permintaan gagal: " + error.message);
+    }
+}
+
+
+/* =========================================
    DATA PORTAL AKADEMIK & V-CLASS
 ========================================= */
 
